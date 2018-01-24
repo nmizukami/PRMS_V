@@ -26,6 +26,7 @@ END MODULE PRMS_CLIMATE_HRU
 INTEGER FUNCTION climate_hru()
   USE netcdf_io_mod
   USE PRMS_CLIMATE_HRU
+  USE PRMS_MODULE, ONLY: MAXFILE_LENGTH
   USE PRMS_MODULE, ONLY: Process, Nhru, Climate_transp_flag, Orad_flag, Model, &
                          Climate_precip_flag, Climate_temp_flag, Climate_potet_flag, Climate_swrad_flag, &
                          Start_year, Start_month, Start_day, Humidity_cbh_flag, Windspeed_cbh_flag
@@ -47,12 +48,14 @@ INTEGER FUNCTION climate_hru()
   EXTERNAL :: read_cbh_date, check_cbh_value, check_cbh_intvalue, print_module
   ! Local Variables
   INTEGER :: i, jj, ierr, istop, missing, ios
+  CHARACTER(LEN=MAXFILE_LENGTH) :: climate_nc
   INTEGER :: timestep
   DOUBLE PRECISION :: sum_obs
   REAL :: tmax_hru, tmin_hru, ppt, harea
   REAL, allocatable :: trans_flag(:)
+  logical :: check_climate_hru_nc
   CHARACTER(LEN=80), SAVE :: Version_climate_hru
-!***********************************************************************
+
   climate_hru = 0
   ierr = 0
   IF ( Process(:3)=='run' ) THEN
@@ -287,11 +290,7 @@ INTEGER FUNCTION climate_hru()
         istop = 0
         ierr = 0
 
-        call setup_netcdf_file("input/forcing_data.nc", NCfile_unit, &
-                                "pr",   Precip_unit,            &
-                                "tmax", Tmax_unit,              &
-                                "tmin", Tmin_unit,              &
-                                "sw",   Swrad_unit)
+        check_climate_hru_nc = .false.
 
         IF ( Climate_precip_flag==1 ) THEN
           IF ( getparam(MODNAME, 'rain_cbh_adj', Nhru*12, 'real', Rain_cbh_adj)/=0 ) CALL read_error(2, 'rain_cbh_adj')
@@ -308,6 +307,15 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Precip_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Precip_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Precip_day)
+              stop
+            endif
+          endif
         ENDIF
 
         IF ( Climate_temp_flag==1 ) THEN
@@ -336,6 +344,15 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Tmax_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Tmax_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Tmax_day)
+              stop
+            endif
+          endif
         ENDIF
 
         IF ( Climate_potet_flag==1 ) THEN
@@ -351,6 +368,15 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Potet_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Potet_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Potet_day)
+              stop
+            endif
+          endif
         ENDIF
 
         IF ( Climate_transp_flag==1 ) THEN
@@ -365,6 +391,15 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Transp_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Transp_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Transp_day)
+              stop
+            endif
+          endif
         ENDIF
 
         IF ( Climate_swrad_flag==1 ) THEN
@@ -379,6 +414,15 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Swrad_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Swrad_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Swrad_day)
+              stop
+            endif
+          endif
         ENDIF
 
         IF ( Humidity_cbh_flag==1 ) THEN
@@ -396,6 +440,15 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Humidity_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Humidity_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Humidity_day)
+              stop
+            endif
+          endif
         ENDIF
 
         IF ( Windspeed_cbh_flag==1 ) THEN
@@ -410,7 +463,24 @@ INTEGER FUNCTION climate_hru()
           !    istop = 1
           !  ENDIF
           !ENDIF
+          if (.not. check_climate_hru_nc) then
+            climate_nc = trim(Windspeed_day)
+            check_climate_hru_nc = .True.
+          else
+            if (trim(Windspeed_day) .ne. trim(climate_nc)) then
+              print*, "Mismatch climate_hru netcdf name: ",trim(Windspeed_day)
+              stop
+            endif
+          endif
         ENDIF
+
+        !climate_nc = "input/forcing_data.nc"
+        call setup_netcdf_file(climate_nc, NCfile_unit,         &
+                                "pr",   Precip_unit,            &
+                                "tmax", Tmax_unit,              &
+                                "tmin", Tmin_unit,              &
+                                "sw",   Swrad_unit)
+
 
         IF ( istop==1 ) STOP 'ERROR in climate_hru'
 
