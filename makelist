@@ -1,0 +1,58 @@
+
+#-------------------------------------------------------------------
+# $Id: makelist 8328 2016-06-13 20:36:12Z rsregan $
+#-------------------------------------------------------------------
+MAINDIR     = /glade/u/home/mizukami/model/prms/PRMS_V
+MMFDIR      = $(MAINDIR)/mmf
+LIBDIR      = $(MAINDIR)/lib
+PRMSDIR     = $(MAINDIR)/branch
+BINDIR      = $(MAINDIR)/bin
+MMFLIB      = $(LIBDIR)/libmmf.a
+NCDF_PATH   =/opt/netcdf4-gcc
+LIBNETCDF   = -Wl,-rpath,$(NCDF_PATH)/lib \
+  		-L$(NCDF_PATH)/lib -lnetcdff -lnetcdf
+INCNETCDF   = -I$(NCDF_PATH)/include
+
+#########################################################
+# Configure tags for each system
+##########################################################
+#ARC		= UNIX
+ARC		= LINUX
+
+OPTLEVEL	= -g
+#OPTLEVEL	= -O -Bstatic
+LDFLAGS		=$(OPTLEVEL)
+
+##########################################################
+# Define the Fortran compile flags
+##########################################################
+FFLAGS= $(OPTLEVEL) -fbounds-check -Wall -fno-second-underscore
+#FFLAGS= $(OPTLEVEL) -Wall -fno-second-underscore
+FC		= gfortran
+
+##########################################################
+# Define the C compile flags
+# -D_UF defines UNIX naming conventions for mixed language compilation.
+##########################################################
+CFLAGS		= $(OPTLEVEL) -D$(ARC) -D_UF
+CC		= gcc
+
+##########################################################
+# Define the libraries
+##########################################################
+MATHLIB		= -lm
+#GCLIB           = -L/opt/local/lib -lgfortran -lgcc_s.1
+GCLIB		= -lgfortran -lgcc $(MATHLIB)
+FLIBS    = $(GCLIB)
+
+##########################################################
+# Unix system commands
+##########################################################
+RM		= rm -f
+AR  		= ar ruv
+RANLIB		= ranlib
+MAKE		= make
+LN		= ln -s
+CD		= cd
+CP		= cp
+
