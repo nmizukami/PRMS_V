@@ -19,10 +19,10 @@
  | FUNCTION     : umalloc
  | COMMENT      :
  | PARAMETERS   :
- | RETURN VALUE : 
+ | RETURN VALUE :
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
-char *umalloc (unsigned size) {
+char *umalloc (size_t size) {
   char *ptr;
 
   if (!size)
@@ -40,10 +40,10 @@ char *umalloc (unsigned size) {
  | FUNCTION     : urealloc
  | COMMENT      :
  | PARAMETERS   :
- | RETURN VALUE : 
+ | RETURN VALUE :
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
-char *urealloc (char *ptr, unsigned size) {
+char *urealloc (char *ptr, size_t size) {
   if (ptr == NULL) return(umalloc(size));
   if ((ptr = (char *)realloc(ptr, size)) == NULL)
     if (size != 0) {
@@ -57,12 +57,12 @@ char *urealloc (char *ptr, unsigned size) {
  | FUNCTION     : ucalloc
  | COMMENT      :
  | PARAMETERS   :
- | RETURN VALUE : 
+ | RETURN VALUE :
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
-char *ucalloc (unsigned num, unsigned size) {
+char *ucalloc (size_t num, size_t size) {
   char *ptr;
-  if ((ptr = (char *)calloc(num, size)) == NULL) 
+  if ((ptr = (char *)calloc(num, size)) == NULL)
     if ((size != 0) && (num != 0))
       (void)fprintf(stderr, "Cannot perform calloc, num, size = %d,%d\n",num,size);
       exit(1);
@@ -73,7 +73,7 @@ char *ucalloc (unsigned num, unsigned size) {
  | FUNCTION     : ufree
  | COMMENT      :
  | PARAMETERS   :
- | RETURN VALUE : 
+ | RETURN VALUE :
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 void ufree (char *ptr) {
@@ -81,4 +81,3 @@ void ufree (char *ptr) {
    if (ptr != NULL) free(ptr);
 */
 }
-

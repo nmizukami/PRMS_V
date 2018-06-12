@@ -76,7 +76,7 @@ int ncdfCloseAni(long naniVars, PUBVAR **ani_out_vars, int ani_out_flag) {
 
     sprintf(ani_path, "%s.nc", *((char **) control_var("ani_output_file")));
 
-    retval = nc_create(ani_path, NC_CLOBBER, &ncdf);
+    retval = nc_create(ani_path, NC_NETCDF4, &ncdf);
     if (retval != 0) ERR(retval);
 
     if (ani_out_flag > 2) {
@@ -373,5 +373,3 @@ void globalAttributsForCf (int ncdf) {
     retval = nc_put_att_text(ncdf, NC_GLOBAL, "creator_email", strlen(email), email);
     if (retval) ERR(retval);
 }
-
-
