@@ -761,9 +761,9 @@ EXTERN void ROSENBROCK_batch_run (void);
 #define EXTERN extern
 #endif
 
-EXTERN char *umalloc (unsigned);
-EXTERN char *urealloc (char *, unsigned);
-EXTERN char *ucalloc (unsigned, unsigned);
+EXTERN char *umalloc (size_t);
+EXTERN char *urealloc (char *, size_t);
+EXTERN char *ucalloc (size_t, size_t);
 EXTERN void ufree (char *);
 
 /***  julday.c  **************************************************/
