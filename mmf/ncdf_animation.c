@@ -76,7 +76,7 @@ int ncdfCloseAni(long naniVars, PUBVAR **ani_out_vars, int ani_out_flag) {
 
     sprintf(ani_path, "%s.nc", *((char **) control_var("ani_output_file")));
 
-    retval = nc_create(ani_path, NC_NETCDF4, &ncdf);
+    retval = nc_create(ani_path, NC_NETCDF4 | NC_CLOBBER, &ncdf);
     if (retval != 0) ERR(retval);
 
     if (ani_out_flag > 2) {
